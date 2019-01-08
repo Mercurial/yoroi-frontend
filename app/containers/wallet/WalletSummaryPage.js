@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { defineMessages, intlShape, FormattedHTMLMessage } from 'react-intl';
+import environment from '../../environment';
 import type { Notification } from '../../types/notificationType';
 import NotificationMessage from '../../components/widgets/NotificationMessage';
 import globalMessages from '../../i18n/global-messages';
@@ -11,6 +12,7 @@ import WalletTransactionsList from '../../components/wallet/transactions/WalletT
 import WalletSummary from '../../components/wallet/summary/WalletSummary';
 import WalletNoTransactions from '../../components/wallet/transactions/WalletNoTransactions';
 import VerticalFlexContainer from '../../components/layout/VerticalFlexContainer';
+import ExportTxDialog from '../../components/wallet/summary/export/ExportTxDialog';
 import resolver from '../../utils/imports';
 import { Logger } from '../../utils/logging';
 
@@ -63,6 +65,7 @@ export default class WalletSummaryPage extends Component<Props> {
       Logger.error('[WalletSummaryPage::render] Active wallet required');
       return null;
     }
+    const { uiDialogs } = this.props.stores;    
     if (searchOptions) {
       const { limit } = searchOptions;
       const noTransactionsLabel = intl.formatMessage(messages.noTransactions);
@@ -102,9 +105,17 @@ export default class WalletSummaryPage extends Component<Props> {
           numberOfTransactions={totalAvailable}
           pendingAmount={unconfirmedAmount}
           isLoadingTransactions={recentTransactionsRequest.isExecutingFirstTime}
+          openExportTxToFileDialog={this.openExportTxToFileDialog}
         />
 
         {walletTransactions}
+
+        {uiDialogs.isOpen(ExportTxDialog) ? (
+          <ExportTxDialog
+            submit={actions[environment.API].transactions.exportTransactionsToFile.trigger}
+            cancel={this.closeExportTxToFileDialog}
+          />
+        ) : null}
 
       </VerticalFlexContainer>
     );
@@ -122,5 +133,15 @@ export default class WalletSummaryPage extends Component<Props> {
     }
 
     return notification;
+  }
+
+  openExportTxToFileDialog = () => {
+    const { actions } = this.props;
+    actions.dialogs.open.trigger({ dialog: ExportTxDialog });
+  }
+
+  closeExportTxToFileDialog = () => {
+    const { actions } = this.props;
+    actions.dialogs.closeActiveDialog.trigger();
   }
 }

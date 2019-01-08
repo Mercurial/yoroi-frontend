@@ -4,9 +4,15 @@ import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import Store from './Store';
 import CachedRequest from '../lib/LocalizedCachedRequest';
+import LocalizedRequest from '../lib/LocalizedRequest';
 import WalletTransaction from '../../domain/WalletTransaction';
-import type { GetTransactionsResponse, GetBalanceResponse,
-  GetTransactionsRequest, GetTransactionsRequesOptions } from '../../api/common';
+import type {
+  GetTransactionsResponse,
+  GetBalanceResponse,
+  GetTransactionsRequest,
+  GetTransactionsRequesOptions,
+  ExportTransactionsToFileResponse,
+} from '../../api/common';
 import environment from '../../environment';
 
 export default class TransactionsStore extends Store {
@@ -31,11 +37,14 @@ export default class TransactionsStore extends Store {
 
   @observable _searchOptionsForWallets = {};
 
+  exportTransactionsToFileRequest: LocalizedRequest<ExportTransactionsToFileResponse>;
+
   _hasAnyPending: boolean = false;
 
   setup() {
     const actions = this.actions[environment.API].transactions;
     actions.loadMoreTransactions.listen(this._increaseSearchLimit);
+    actions.exportTransactionsToFile.listen(this._exportTransactionsToFile);
   }
 
   @action _increaseSearchLimit = () => {
@@ -190,4 +199,7 @@ export default class TransactionsStore extends Store {
     return new CachedRequest(this.api[environment.API].getBalance);
   };
 
+  @action _exportTransactionsToFile = () => {
+    this.exportTransactionsToFileRequest.reset();
+  }
 }
