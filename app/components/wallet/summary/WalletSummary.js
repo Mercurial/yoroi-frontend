@@ -26,6 +26,11 @@ const messages = defineMessages({
     id: 'wallet.summary.page.transactionsLabel',
     defaultMessage: '!!!Number of transactions',
     description: '"Number of transactions" label on Wallet summary page'
+  },
+  exportIconTooltip: {
+    id: 'wallet.transaction.export.exportIcon.tooltip',
+    defaultMessage: '!!!Export to file',
+    description: '"Export" icon tooltip'
   }
 });
 
@@ -84,7 +89,7 @@ export default class WalletSummary extends Component<Props> {
                 svg={exportTxToFileSvg}
                 cleanup={['title']}
                 className={styles.exportTxToFileSvg}
-                title={'Export to file'}
+                title={intl.formatMessage(messages.exportIconTooltip)}
                 onClick={openExportTxToFileDialog} />
             ) : null}
         </div>

@@ -16,6 +16,21 @@ import ErrorBlock from '../../../widgets/ErrorBlock';
 import styles from './ExportTxDialog.scss';
 
 const messages = defineMessages({
+  dialogTitle: {
+    id: 'wallet.transaction.export.dialog.title',
+    defaultMessage: '!!!Export transactions to file',
+    description: 'Dialog title'
+  },
+  infoText1: {
+    id: 'wallet.transaction.export.dialog.infoText1',
+    defaultMessage: '!!!The entire transaction history within your wallet will be exported to a file',
+    description: 'info text about entire transaction history export'
+  },
+  exportButtonLabel: {
+    id: 'wallet.transaction.export.dialog.exportButton.label',
+    defaultMessage: '!!!Export',
+    description: '"Export" button label'
+  }
 });
 
 type Props = {
@@ -41,12 +56,14 @@ export default class ExportTxDialog extends Component<Props> {
       cancel
     } = this.props;
 
-    const introBlock = (<div />);
-    const middleBlock = (<div />);
+    const introBlock = (
+      <div>
+        <span>{intl.formatMessage(messages.infoText1)}</span>
+      </div>);
 
     const dailogActions = [{
       className: isActionProcessing ? styles.processing : null,
-      label: 'Export',
+      label: intl.formatMessage(messages.exportButtonLabel),
       primary: true,
       disabled: false,
       onClick: submit,
@@ -55,14 +72,13 @@ export default class ExportTxDialog extends Component<Props> {
     return (
       <Dialog
         className={classnames([styles.component, 'ExportTxDialog'])}
-        title="TEST"
+        title={intl.formatMessage(messages.dialogTitle)}
         actions={dailogActions}
         closeOnOverlayClick={false}
         closeButton={<DialogCloseButton />}
         onClose={cancel}
       >
         {introBlock}
-        {middleBlock}
         <ErrorBlock error={error} />
       </Dialog>);
   }
