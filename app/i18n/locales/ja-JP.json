@@ -229,7 +229,7 @@
   "wallet.transaction.confirmations": "確認",
   "wallet.transaction.conversion.rate": "コンバージョン率",
   "wallet.transaction.export.dialog.exportButton.label": "出力",
-  "wallet.transaction.export.dialog.infoText1": "ウォレット内の全取引履歴がファイルに出力されます",
+  "wallet.transaction.export.dialog.infoText1": "ウォレット内の全取引履歴がファイルに出力されます。",
   "wallet.transaction.export.dialog.title": "トランザクションをファイルに出力",
   "wallet.transaction.export.exportIcon.tooltip": "ファイルに出力",
   "wallet.transaction.received": "{currency} 受信済",

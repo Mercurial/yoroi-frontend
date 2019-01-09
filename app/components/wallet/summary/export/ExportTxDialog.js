@@ -56,8 +56,8 @@ export default class ExportTxDialog extends Component<Props> {
       cancel
     } = this.props;
 
-    const introBlock = (
-      <div>
+    const infoBlock = (
+      <div className={styles.infoBlock}>
         <span>{intl.formatMessage(messages.infoText1)}</span>
       </div>);
 
@@ -78,7 +78,7 @@ export default class ExportTxDialog extends Component<Props> {
         closeButton={<DialogCloseButton />}
         onClose={cancel}
       >
-        {introBlock}
+        {infoBlock}
         <ErrorBlock error={error} />
       </Dialog>);
   }
