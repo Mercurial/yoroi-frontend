@@ -1,5 +1,9 @@
 import moment from 'moment';
 import { sendFileToUser } from './utils';
+import type {
+  ExportTransactionsRequest,
+  ExportTransactionsResponse,
+} from '../common';
 
 export type TransactionExportRow = {
   type: 'in' | 'out',
@@ -37,12 +41,9 @@ export default class ExportApi {
    *
    * No result will be returned. File is sent to user as side-effect.
    */
-  async exportTransactions(request : {
-    rows: Array<TransactionExportRow>,
-    format?: TransactionExportDataFormat,
-    fileType?: TransactionExportFileType,
-    fileName: string
-  }): Promise<void> {
+  async exportTransactions(
+    request : ExportTransactionsRequest
+  ): Promise<ExportTransactionsResponse> {
     const { rows, format, fileType, fileName } = request;
     const data = ExportApi.convertExportRowsToCsv(rows, format);
     const fileResponse = ExportApi.convertCsvDataToFile(data, fileType);

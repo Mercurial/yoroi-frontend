@@ -70,6 +70,8 @@ import type {
   CreateWalletResponse,
   GetTransactionsRequest,
   GetTransactionsResponse,
+  GetTransactionRowsToExportRequest,
+  GetTransactionRowsToExportResponse,
   GetAddressesRequest,
   GetAddressesResponse,
   GetBalanceResponse,
@@ -88,7 +90,6 @@ import { WrongPassphraseError } from './lib/cardanoCrypto/cryptoErrors';
 import { getSingleCryptoAccount, getAdaWallet, getLastBlockNumber } from './adaLocalStorage';
 import { saveTxs } from './lib/lovefieldDatabase';
 import type { SignedResponse } from './lib/yoroi-backend-api';
-import type { TransactionExportRow } from '../export';
 import { convertAdaTransactionsToExportRows } from './lib/utils';
 
 // ADA specific Request / Response params
@@ -562,7 +563,9 @@ export default class AdaApi {
   }
 
   // noinspection JSMethodCanBeStatic
-  async getTransactionRowsToExport(): Promise<Array<TransactionExportRow>> {
+  async getTransactionRowsToExport(
+    request: GetTransactionRowsToExportRequest // eslint-disable-line no-unused-vars
+  ): Promise<GetTransactionRowsToExportResponse> {
     try {
       await refreshTxs();
       const history: AdaTransactions = await getAdaTxsHistoryByWallet();

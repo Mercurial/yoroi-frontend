@@ -11,9 +11,16 @@ import type {
   GetBalanceResponse,
   GetTransactionsRequest,
   GetTransactionsRequesOptions,
-  ExportTransactionsToFileResponse,
+  GetTransactionRowsToExportRequest,
+  GetTransactionRowsToExportResponse,
+  ExportTransactionsRequest,
+  ExportTransactionsResponse,
 } from '../../api/common';
 import environment from '../../environment';
+import {
+  Logger,
+  stringifyError
+} from '../../utils/logging';
 
 export default class TransactionsStore extends Store {
 
@@ -37,7 +44,11 @@ export default class TransactionsStore extends Store {
 
   @observable _searchOptionsForWallets = {};
 
-  exportTransactionsToFileRequest: LocalizedRequest<ExportTransactionsToFileResponse>;
+  getTransactionRowsToExportRequest: LocalizedRequest<GetTransactionRowsToExportResponse>
+    = new LocalizedRequest(this.api.ada.getTransactionRowsToExport);
+
+  exportTransactions: LocalizedRequest<ExportTransactionsResponse>
+    = new LocalizedRequest(this.api.export.exportTransactions);    
 
   _hasAnyPending: boolean = false;
 
@@ -199,7 +210,25 @@ export default class TransactionsStore extends Store {
     return new CachedRequest(this.api[environment.API].getBalance);
   };
 
-  @action _exportTransactionsToFile = () => {
-    this.exportTransactionsToFileRequest.reset();
+  @action _exportTransactionsToFile = async (params: GetTransactionRowsToExportRequest) => {
+    try {
+      // TODO: Logging
+      this.getTransactionRowsToExportRequest.reset();
+      this.exportTransactions.reset()
+      const respTxRows: GetTransactionRowsToExportResponse = 
+        await this.getTransactionRowsToExportRequest.execute(params).promise;
+
+      const req = {
+        rows: respTxRows,
+        fileName: 'test'
+      }
+      await this.exportTransactions.execute(req).promise;
+
+    } catch (error) {
+      Logger.error(`TransactionsStore::_exportTransactionsToFile ${stringifyError(error)}`);
+    } finally {
+      this.getTransactionRowsToExportRequest.reset();
+      this.exportTransactions.reset();
+    }
   }
 }
