@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * Make browser to download the specified blob of bytes as a file with the specified name
  */

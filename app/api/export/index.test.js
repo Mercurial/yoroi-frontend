@@ -1,3 +1,4 @@
+// @flow
 import type { CsvData } from './index';
 import ExportApi, { COIN_TRACKING_HEADERS } from './index';
 

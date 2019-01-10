@@ -1,3 +1,4 @@
+// @flow
 import './test-config';
 import BigNumber from 'bignumber.js';
 import {

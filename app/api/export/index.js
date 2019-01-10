@@ -1,3 +1,4 @@
+// @flow
 import moment from 'moment';
 import { sendFileToUser } from './utils';
 import type {
@@ -17,8 +18,15 @@ export type CsvData = {
   rows: Array<Array<string>>
 }
 
-export type TransactionExportFileType = 'csv';
-export type TransactionExportDataFormat = 'CoinTracking';
+const TRANSACTION_EXPORT_FILE_TYPE = Object.freeze({
+  csv: 'csv'
+});
+export type TransactionExportFileType = $Values<typeof TRANSACTION_EXPORT_FILE_TYPE>;
+
+const TRANSACTION_EXPORT_DATA_FORMAT = Object.freeze({
+  CoinTracking: 'CoinTracking'
+});
+export type TransactionExportDataFormat = $Values<typeof TRANSACTION_EXPORT_DATA_FORMAT>;
 
 export type ExportFileResponse = {
   data: Blob,
@@ -55,10 +63,11 @@ export default class ExportApi {
    */
   static convertExportRowsToCsv(
     rows: Array<TransactionExportRow>,
-    format?: TransactionExportDataFormat
+    format?: TransactionExportDataFormat = TRANSACTION_EXPORT_DATA_FORMAT.CoinTracking
   ): CsvData {
-    switch (format || 'CoinTracking') {
-      case 'CoinTracking': return _formatExportRowsIntoCoinTrackingFormat(rows);
+    switch (format) {
+      case TRANSACTION_EXPORT_DATA_FORMAT.CoinTracking:
+        return _formatExportRowsIntoCoinTrackingFormat(rows);
       default: throw new Error('Unexpected export data format: ' + format);
     }
   }
