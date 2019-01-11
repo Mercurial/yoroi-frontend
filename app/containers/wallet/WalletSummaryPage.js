@@ -65,7 +65,7 @@ export default class WalletSummaryPage extends Component<Props> {
       Logger.error('[WalletSummaryPage::render] Active wallet required');
       return null;
     }
-    const { uiDialogs } = this.props.stores;    
+    const { uiDialogs } = this.props.stores;
     if (searchOptions) {
       const { limit } = searchOptions;
       const noTransactionsLabel = intl.formatMessage(messages.noTransactions);

@@ -39,7 +39,6 @@ export type ExportFileResponse = {
  *
  * Also provides functionality to send abstract byte-blobs as files for user to download.
  */
-
 export default class ExportApi {
 
   /**
@@ -49,9 +48,9 @@ export default class ExportApi {
    *
    * No result will be returned. File is sent to user as side-effect.
    */
-  async exportTransactions(
+  exportTransactions = async (
     request : ExportTransactionsRequest
-  ): Promise<ExportTransactionsResponse> {
+  ): Promise<ExportTransactionsResponse> => {
     const { rows, format, fileType, fileName } = request;
     const data = ExportApi.convertExportRowsToCsv(rows, format);
     const fileResponse = ExportApi.convertCsvDataToFile(data, fileType);
@@ -77,14 +76,14 @@ export default class ExportApi {
    */
   static convertCsvDataToFile(
     data: CsvData,
-    fileType?: TransactionExportFileType
+    fileType?: TransactionExportFileType = TRANSACTION_EXPORT_FILE_TYPE.csv
   ): ExportFileResponse {
-    fileType = fileType || 'csv';
     switch (fileType) {
-      case 'csv': return {
-        data: _convertCsvDataIntoCsvBlob(data),
-        fileType
-      };
+      case TRANSACTION_EXPORT_FILE_TYPE.csv:
+        return {
+          fileType,
+          data: _convertCsvDataIntoCsvBlob(data),
+        };
       default: throw new Error('Unexpected file type: ' + fileType);
     }
   }

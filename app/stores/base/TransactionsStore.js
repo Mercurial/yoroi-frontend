@@ -48,7 +48,7 @@ export default class TransactionsStore extends Store {
     = new LocalizedRequest(this.api.ada.getTransactionRowsToExport);
 
   exportTransactions: LocalizedRequest<ExportTransactionsResponse>
-    = new LocalizedRequest(this.api.export.exportTransactions);    
+    = new LocalizedRequest(this.api.export.exportTransactions);
 
   _hasAnyPending: boolean = false;
 
@@ -214,14 +214,14 @@ export default class TransactionsStore extends Store {
     try {
       // TODO: Logging
       this.getTransactionRowsToExportRequest.reset();
-      this.exportTransactions.reset()
-      const respTxRows: GetTransactionRowsToExportResponse = 
+      this.exportTransactions.reset();
+      const respTxRows: GetTransactionRowsToExportResponse =
         await this.getTransactionRowsToExportRequest.execute(params).promise;
 
-      const req = {
+      const req: ExportTransactionsRequest = {
         rows: respTxRows,
         fileName: 'test'
-      }
+      };
       await this.exportTransactions.execute(req).promise;
 
     } catch (error) {

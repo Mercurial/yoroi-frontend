@@ -49,7 +49,8 @@ async function extractStringFromBlob(b): Promise<string> {
   return new Promise(resolve => {
     const reader = new FileReader();
     reader.addEventListener('loadend', () => {
-      resolve(String.fromCharCode.apply(null, new Uint8Array(reader.result)));
+      // resolve(String.fromCharCode.apply(null, new Uint8Array(reader.result))); TODO
+      resolve('TODO'); // TODO
     });
     reader.readAsArrayBuffer(b);
   });
