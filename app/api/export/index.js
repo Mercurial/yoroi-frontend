@@ -8,8 +8,8 @@ import {
 import LocalizableError from '../../i18n/LocalizableError';
 
 import { sendFileToUser } from './utils';
+import { GenericApiError } from '../common';
 import type {
-  GenericApiError,
   ExportTransactionsRequest,
   ExportTransactionsResponse,
 } from '../common';
