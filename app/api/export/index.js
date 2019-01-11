@@ -33,6 +33,10 @@ export type ExportFileResponse = {
   fileType: TransactionExportFileType
 }
 
+const DEFAULT_FILE_NAME_PREFIX = 'Yoroi-Transaction-History';
+const FN_SEPARATOR = '_';
+const FN_TIME_FORMAT = 'YYYY-MM-DD';
+
 /**
  * This api provides functions to export abstract lists of transactions
  * as files in different formats and different types.
@@ -52,9 +56,10 @@ export default class ExportApi {
     request : ExportTransactionsRequest
   ): Promise<ExportTransactionsResponse> => {
     const { rows, format, fileType, fileName } = request;
+    const dlFileName = fileName || ExportApi.createDefaultFileName();
     const data = ExportApi.convertExportRowsToCsv(rows, format);
     const fileResponse = ExportApi.convertCsvDataToFile(data, fileType);
-    return await this.sendFileToUser(fileResponse.data, `${fileName}.${fileResponse.fileType}`);
+    return await this.sendFileToUser(fileResponse.data, `${dlFileName}.${fileResponse.fileType}`);
   }
 
   /**
@@ -86,6 +91,12 @@ export default class ExportApi {
         };
       default: throw new Error('Unexpected file type: ' + fileType);
     }
+  }
+
+  /** Creates a default export file name */
+  static createDefaultFileName = (): string => {
+    // SYNTAX: Yoroi-Transaction-History_YYYY-MM-DD
+    return `${DEFAULT_FILE_NAME_PREFIX}${FN_SEPARATOR}${moment().format(FN_TIME_FORMAT)}`; // TODO: improvement in I2
   }
 
   // noinspection JSMethodCanBeStatic

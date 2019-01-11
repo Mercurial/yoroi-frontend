@@ -6,4 +6,5 @@ import Action from '../lib/Action';
 export default class TransactionsActions {
   loadMoreTransactions: Action<any> = new Action();
   exportTransactionsToFile: Action<void> = new Action();
+  closeExportTransactionDialog: Action<void> = new Action();
 }

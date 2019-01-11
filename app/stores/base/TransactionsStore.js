@@ -21,6 +21,9 @@ import {
   Logger,
   stringifyError
 } from '../../utils/logging';
+import LocalizableError from '../../i18n/LocalizableError';
+import { UnexpectedError } from '../../i18n/LocalizableError';
+import globalMessages from '../../i18n/global-messages';
 
 export default class TransactionsStore extends Store {
 
@@ -50,12 +53,17 @@ export default class TransactionsStore extends Store {
   exportTransactions: LocalizedRequest<ExportTransactionsResponse>
     = new LocalizedRequest(this.api.export.exportTransactions);
 
+  @observable isExporting: boolean = false;
+
+  @observable exportError: ?LocalizableError;
+
   _hasAnyPending: boolean = false;
 
   setup() {
     const actions = this.actions[environment.API].transactions;
     actions.loadMoreTransactions.listen(this._increaseSearchLimit);
     actions.exportTransactionsToFile.listen(this._exportTransactionsToFile);
+    actions.closeExportTransactionDialog.listen(this._closeExportTransactionDialog);
   }
 
   @action _increaseSearchLimit = () => {
@@ -210,25 +218,59 @@ export default class TransactionsStore extends Store {
     return new CachedRequest(this.api[environment.API].getBalance);
   };
 
-  @action _exportTransactionsToFile = async (params: GetTransactionRowsToExportRequest) => {
+  @action _exportTransactionsToFile = async (
+    params: GetTransactionRowsToExportRequest
+  ): Promise<void> => {
     try {
+      this._setExporting(true);
       // TODO: Logging
       this.getTransactionRowsToExportRequest.reset();
       this.exportTransactions.reset();
+
       const respTxRows: GetTransactionRowsToExportResponse =
         await this.getTransactionRowsToExportRequest.execute(params).promise;
 
-      const req: ExportTransactionsRequest = {
-        rows: respTxRows,
-        fileName: 'test'
-      };
-      await this.exportTransactions.execute(req).promise;
+      if(respTxRows == null || respTxRows.length < 1) {
+        throw new LocalizableError(globalMessages.noTransactionsFound);
+      }
+
+      setTimeout(async () => {
+        const req: ExportTransactionsRequest = {
+          rows: respTxRows
+        };
+        await this.exportTransactions.execute(req).promise;
+        this._setExporting(false);
+        this.actions.dialogs.closeActiveDialog.trigger();
+      }, 800);
 
     } catch (error) {
+      let localizableError = error;
+      if(!(error instanceof LocalizableError)) {
+        localizableError = new UnexpectedError();
+      }
+
+      this._setExportError(localizableError);
+      this._setExporting(false);
       Logger.error(`TransactionsStore::_exportTransactionsToFile ${stringifyError(error)}`);
     } finally {
       this.getTransactionRowsToExportRequest.reset();
       this.exportTransactions.reset();
+    }
+  }
+
+  @action _setExporting = (isExporting: boolean): void  => {
+    this.isExporting = isExporting;
+  }
+
+  @action _setExportError = (error: ?LocalizableError): void => {
+    this.exportError = error;
+  }
+
+  @action _closeExportTransactionDialog = (): void => {
+    if(!this.isExporting) {
+      this.actions.dialogs.closeActiveDialog.trigger();
+      this._setExporting(false);
+      this._setExportError(null);
     }
   }
 }

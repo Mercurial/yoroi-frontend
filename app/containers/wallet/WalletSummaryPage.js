@@ -12,7 +12,7 @@ import WalletTransactionsList from '../../components/wallet/transactions/WalletT
 import WalletSummary from '../../components/wallet/summary/WalletSummary';
 import WalletNoTransactions from '../../components/wallet/transactions/WalletNoTransactions';
 import VerticalFlexContainer from '../../components/layout/VerticalFlexContainer';
-import ExportTxDialog from '../../components/wallet/summary/export/ExportTxDialog';
+import ExportTransactionDialog from '../../components/wallet/export/ExportTransactionDialog';
 import resolver from '../../utils/imports';
 import { Logger } from '../../utils/logging';
 
@@ -26,11 +26,6 @@ const messages = defineMessages({
     defaultMessage: '!!!No recent transactions',
     description:
       'Message shown when wallet has no transactions on wallet summary page.'
-  },
-  noTransactionsFound: {
-    id: 'wallet.summary.no.transaction',
-    defaultMessage: '!!!No transactions found',
-    description: 'Message shown when wallet transaction search returns zero results.'
   }
 });
 
@@ -57,6 +52,8 @@ export default class WalletSummaryPage extends Component<Props> {
       searchOptions,
       recentTransactionsRequest,
       unconfirmedAmount,
+      isExporting,
+      exportError,
     } = transactions;
     const wallet = wallets.active;
     let walletTransactions = null;
@@ -65,11 +62,17 @@ export default class WalletSummaryPage extends Component<Props> {
       Logger.error('[WalletSummaryPage::render] Active wallet required');
       return null;
     }
+
+    const {
+      exportTransactionsToFile,
+      closeExportTransactionDialog,
+    } = actions[environment.API].transactions;
+
     const { uiDialogs } = this.props.stores;
     if (searchOptions) {
       const { limit } = searchOptions;
       const noTransactionsLabel = intl.formatMessage(messages.noTransactions);
-      const noTransactionsFoundLabel = intl.formatMessage(messages.noTransactionsFound);
+      const noTransactionsFoundLabel = intl.formatMessage(globalMessages.noTransactionsFound);
       if (recentTransactionsRequest.isExecutingFirstTime || hasAny) {
         walletTransactions = (
           <WalletTransactionsList
@@ -105,15 +108,17 @@ export default class WalletSummaryPage extends Component<Props> {
           numberOfTransactions={totalAvailable}
           pendingAmount={unconfirmedAmount}
           isLoadingTransactions={recentTransactionsRequest.isExecutingFirstTime}
-          openExportTxToFileDialog={this.openExportTxToFileDialog}
+          openExportTxToFileDialog={this.openExportTransactionDialog}
         />
 
         {walletTransactions}
 
-        {uiDialogs.isOpen(ExportTxDialog) ? (
-          <ExportTxDialog
-            submit={actions[environment.API].transactions.exportTransactionsToFile.trigger}
-            cancel={this.closeExportTxToFileDialog}
+        {uiDialogs.isOpen(ExportTransactionDialog) ? (
+          <ExportTransactionDialog
+            isActionProcessing={isExporting}
+            error={exportError}
+            submit={exportTransactionsToFile.trigger}
+            cancel={closeExportTransactionDialog.trigger}
           />
         ) : null}
 
@@ -135,13 +140,8 @@ export default class WalletSummaryPage extends Component<Props> {
     return notification;
   }
 
-  openExportTxToFileDialog = () => {
+  openExportTransactionDialog = (): void => {
     const { actions } = this.props;
-    actions.dialogs.open.trigger({ dialog: ExportTxDialog });
-  }
-
-  closeExportTxToFileDialog = () => {
-    const { actions } = this.props;
-    actions.dialogs.closeActiveDialog.trigger();
+    actions.dialogs.open.trigger({ dialog: ExportTransactionDialog });
   }
 }

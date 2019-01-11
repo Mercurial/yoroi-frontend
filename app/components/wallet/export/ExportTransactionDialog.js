@@ -3,17 +3,16 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import classnames from 'classnames';
 import { defineMessages, intlShape } from 'react-intl';
-// import SvgInline from 'react-svg-inline';
 
 // import globalMessages from '../../../../i18n/global-messages';
-// import LocalizableError from '../../../../i18n/LocalizableError';
+import LocalizableError from '../../../i18n/LocalizableError';
 
-import Dialog from '../../../widgets/Dialog';
-import DialogCloseButton from '../../../widgets/DialogCloseButton';
+import Dialog from '../../widgets/Dialog';
+import DialogCloseButton from '../../widgets/DialogCloseButton';
 
-// import ErrorBlock from '../../../widgets/ErrorBlock';
+import ErrorBlock from '../../widgets/ErrorBlock';
 
-import styles from './ExportTxDialog.scss';
+import styles from './ExportTransactionDialog.scss';
 
 const messages = defineMessages({
   dialogTitle: {
@@ -34,14 +33,14 @@ const messages = defineMessages({
 });
 
 type Props = {
-  // isActionProcessing?: boolean,
-  // error?: ?LocalizableError,
-  // submit?: Function,
+  isActionProcessing: ?boolean,
+  error: ?LocalizableError,
+  submit: Function,
   cancel: Function,
 };
 
 @observer
-export default class ExportTxDialog extends Component<Props> {
+export default class ExportTransactionDialog extends Component<Props> {
 
   static contextTypes = {
     intl: intlShape.isRequired
@@ -50,9 +49,9 @@ export default class ExportTxDialog extends Component<Props> {
   render() {
     const { intl } = this.context;
     const {
-      // isActionProcessing,
-      // error,
-      // submit,
+      isActionProcessing,
+      error,
+      submit,
       cancel
     } = this.props;
 
@@ -62,16 +61,16 @@ export default class ExportTxDialog extends Component<Props> {
       </div>);
 
     const dailogActions = [{
-      // className: isActionProcessing ? styles.processing : null,
+      className: isActionProcessing ? styles.processing : null,
       label: intl.formatMessage(messages.exportButtonLabel),
       primary: true,
       disabled: false,
-      // onClick: submit,
+      onClick: submit,
     }];
 
     return (
       <Dialog
-        className={classnames([styles.component, 'ExportTxDialog'])}
+        className={classnames([styles.component, 'ExportTransactionDialog'])}
         title={intl.formatMessage(messages.dialogTitle)}
         actions={dailogActions}
         closeOnOverlayClick={false}
@@ -79,7 +78,7 @@ export default class ExportTxDialog extends Component<Props> {
         onClose={cancel}
       >
         {infoBlock}
-        {/* <ErrorBlock error={error} /> */}
+        <ErrorBlock error={error} />
       </Dialog>);
   }
 }

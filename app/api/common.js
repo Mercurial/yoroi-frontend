@@ -117,7 +117,7 @@ export type ExportTransactionsRequest = {
   rows: Array<TransactionExportRow>,
   format?: TransactionExportDataFormat,
   fileType?: TransactionExportFileType,
-  fileName: string
+  fileName?: string
 };
 export type ExportTransactionsResponse = void;  // TODO: Implement in the Next iteration
 
