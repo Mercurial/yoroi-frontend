@@ -16,8 +16,7 @@ import Wallet from '../../domain/Wallet';
 import LocalizedRequest from '../lib/LocalizedRequest';
 
 import globalMessages from '../../i18n/global-messages';
-import LocalizableError from '../../i18n/LocalizableError';
-import { UnexpectedError } from '../../i18n/LocalizableError';
+import LocalizableError, { UnexpectedError } from '../../i18n/LocalizableError';
 import { CheckAdressesInUseApiError } from '../../api/ada/errors';
 
 import {

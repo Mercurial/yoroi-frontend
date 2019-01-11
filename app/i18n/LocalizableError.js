@@ -12,7 +12,7 @@ const messages = defineMessages({
     id: 'app.errors.unexpectedError',
     defaultMessage: '!!!Something unexpected happened. Please retry.',
     description: '"Something unexpected happened. Please retry." error message.'
-  },  
+  },
 });
 
 // Base class to allow wrapping a localizable message into an ES6-error

@@ -181,7 +181,7 @@ export default defineMessages({
     id: 'wallet.summary.no.transaction',
     defaultMessage: '!!!No transactions found',
     description: 'Message shown when wallet transaction search returns zero results.'
-  },  
+  },
 });
 
 export const environmentSpecificMessages = {

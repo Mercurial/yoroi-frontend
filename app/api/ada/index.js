@@ -563,16 +563,27 @@ export default class AdaApi {
   }
 
   // noinspection JSMethodCanBeStatic
+  // TODO: improve request in I2
   async getTransactionRowsToExport(
     request: GetTransactionRowsToExportRequest // eslint-disable-line no-unused-vars
   ): Promise<GetTransactionRowsToExportResponse> {
     try {
+      Logger.debug('AdaApi::getTransactionRowsToExport: called');
       await refreshTxs();
       const history: AdaTransactions = await getAdaTxsHistoryByWallet();
+
+      Logger.debug('AdaApi::getTransactionRowsToExport: success');
       return convertAdaTransactionsToExportRows(history[0]);
-    } catch (e) {
-      Logger.error('AdaApi::exportTransactionsToFile: ' + stringifyError(e));
-      throw e;
+    } catch (error) {
+      Logger.error('AdaApi::getTransactionRowsToExport: ' + stringifyError(error));
+
+      if (error instanceof LocalizableError) {
+        // we found it as a LocalizableError, so could throw it as it is.
+        throw error;
+      } else {
+        // We don't know what the problem was so throw a generic error
+        throw new GenericApiError();
+      }
     }
   }
 }

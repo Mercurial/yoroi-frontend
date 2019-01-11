@@ -4,12 +4,10 @@ import { observer } from 'mobx-react';
 import classnames from 'classnames';
 import { defineMessages, intlShape } from 'react-intl';
 
-// import globalMessages from '../../../../i18n/global-messages';
 import LocalizableError from '../../../i18n/LocalizableError';
 
 import Dialog from '../../widgets/Dialog';
 import DialogCloseButton from '../../widgets/DialogCloseButton';
-
 import ErrorBlock from '../../widgets/ErrorBlock';
 
 import styles from './ExportTransactionDialog.scss';

@@ -1,7 +1,15 @@
 // @flow
 import moment from 'moment';
+
+import {
+  Logger,
+  stringifyError,
+} from '../../utils/logging';
+import LocalizableError from '../../i18n/LocalizableError';
+
 import { sendFileToUser } from './utils';
 import type {
+  GenericApiError,
   ExportTransactionsRequest,
   ExportTransactionsResponse,
 } from '../common';
@@ -48,18 +56,33 @@ export default class ExportApi {
   /**
    * Request object MUST contains:
    * - rows: array of export-data
-   * - fileName: only name without extension
    *
    * No result will be returned. File is sent to user as side-effect.
    */
   exportTransactions = async (
     request : ExportTransactionsRequest
   ): Promise<ExportTransactionsResponse> => {
-    const { rows, format, fileType, fileName } = request;
-    const dlFileName = fileName || ExportApi.createDefaultFileName();
-    const data = ExportApi.convertExportRowsToCsv(rows, format);
-    const fileResponse = ExportApi.convertCsvDataToFile(data, fileType);
-    return await this.sendFileToUser(fileResponse.data, `${dlFileName}.${fileResponse.fileType}`);
+    try {
+      Logger.debug('ExportApi::exportTransactions: called');
+
+      const { rows, format, fileType, fileName } = request;
+      const dlFileName = fileName || ExportApi.createDefaultFileName();
+      const data = ExportApi.convertExportRowsToCsv(rows, format);
+      const fileResponse = ExportApi.convertCsvDataToFile(data, fileType);
+
+      Logger.debug('ExportApi::exportTransactions: success');
+      return await this.sendFileToUser(fileResponse.data, `${dlFileName}.${fileResponse.fileType}`);
+    } catch (error) {
+      Logger.error('ExportApi::exportTransactions: ' + stringifyError(error));
+
+      if (error instanceof LocalizableError) {
+        // we found it as a LocalizableError, so could throw it as it is.
+        throw error;
+      } else {
+        // We don't know what the problem was so throw a generic error
+        throw new GenericApiError();
+      }
+    }
   }
 
   /**
@@ -93,11 +116,13 @@ export default class ExportApi {
     }
   }
 
-  /** Creates a default export file name */
-  static createDefaultFileName = (): string => {
-    // SYNTAX: Yoroi-Transaction-History_YYYY-MM-DD
-    return `${DEFAULT_FILE_NAME_PREFIX}${FN_SEPARATOR}${moment().format(FN_TIME_FORMAT)}`; // TODO: improvement in I2
-  }
+  /** Creates a default export file name
+    * SYNTAX: Yoroi-Transaction-History_YYYY-MM-DD
+    * // TODO: improvement in I2) */
+  static createDefaultFileName = (): string => (
+    DEFAULT_FILE_NAME_PREFIX
+    + FN_SEPARATOR
+    + moment().format(FN_TIME_FORMAT));
 
   // noinspection JSMethodCanBeStatic
   /**
