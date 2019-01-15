@@ -1,4 +1,5 @@
 // @flow
+import '../ada/lib/test-config'; // TODO: needs to import this from ADA API, should be somewhere common at TOP level
 import type { CsvData } from './index';
 import ExportApi, { COIN_TRACKING_HEADERS } from './index';
 
@@ -49,9 +50,14 @@ async function extractStringFromBlob(b): Promise<string> {
   return new Promise(resolve => {
     const reader = new FileReader();
     reader.addEventListener('loadend', () => {
-      // resolve(String.fromCharCode.apply(null, new Uint8Array(reader.result))); TODO
-      resolve('TODO'); // TODO
+      // TODO
+      // resolve(String.fromCharCode.apply(null, new Uint8Array(reader.result)));
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      }
     });
-    reader.readAsArrayBuffer(b);
+    // TODO
+    // reader.readAsArrayBuffer(b);
+    reader.readAsText(b);
   });
 }
