@@ -62,7 +62,7 @@ export default class ExportTransactionDialog extends Component<Props> {
       className: isActionProcessing ? styles.processing : null,
       label: intl.formatMessage(messages.exportButtonLabel),
       primary: true,
-      disabled: false,
+      disabled: isActionProcessing,
       onClick: submit,
     }];
 
