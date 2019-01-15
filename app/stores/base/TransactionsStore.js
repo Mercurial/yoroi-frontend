@@ -5,12 +5,8 @@ import BigNumber from 'bignumber.js';
 import Store from './Store';
 import CachedRequest from '../lib/LocalizedCachedRequest';
 import WalletTransaction from '../../domain/WalletTransaction';
-import type {
-  GetTransactionsResponse,
-  GetBalanceResponse,
-  GetTransactionsRequest,
-  GetTransactionsRequesOptions,
-} from '../../api/common';
+import type { GetTransactionsResponse, GetBalanceResponse,
+  GetTransactionsRequest, GetTransactionsRequesOptions } from '../../api/common';
 import environment from '../../environment';
 
 export default class TransactionsStore extends Store {
@@ -193,4 +189,5 @@ export default class TransactionsStore extends Store {
     if (foundRequest && foundRequest.getBalanceRequest) return foundRequest.getBalanceRequest;
     return new CachedRequest(this.api[environment.API].getBalance);
   };
+
 }

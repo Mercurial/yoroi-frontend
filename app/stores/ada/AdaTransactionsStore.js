@@ -32,7 +32,6 @@ export default class AdaTransactionsStore extends TransactionsStore {
   setup() {
     super.setup();
     const actions = this.actions[environment.API].transactions;
-    actions.loadMoreTransactions.listen(this._increaseSearchLimit);
     actions.exportTransactionsToFile.listen(this._exportTransactionsToFile);
     actions.closeExportTransactionDialog.listen(this._closeExportTransactionDialog);
   }
